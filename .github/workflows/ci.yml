@@ -3,6 +3,9 @@ name: vinodh CI/CD Pipeline
 on:
   workflow_dispatch:
 
+env: 
+  AZURE_WEBAPP_NAME: "myvinodhapp"
+
 jobs:
   build:
 
@@ -20,5 +23,20 @@ jobs:
 
     - name: Build
       run: dotnet build ./SampleMvcApp.csproj --configuration Release --no-restore
+
+    - name: publish
+      run: dotnet publish ./SampleMvcApp.csproj --configuration Release --output ./publish
+
+    # deploy to azure
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{env.AZURE_WEBAPP_NAME}}
+        publish-profile: ${{ secrets.API_PUBLISH_SECRET }} 
+        package: ./publish
+
+
+
+
 
       
